@@ -60,17 +60,8 @@ app.post(
       // jwt.sign(payload,secret,[options,options])
       const token = jwt.sign(payload, "12345@abc", { expiresIn: "1d" });
       //-------
-      let oldTokens = await user.tokens;
-
-      if (oldTokens.length) {
-        oldTokens = oldTokens.filter((e) => {
-          const timeDiff = (Date.now() - parseInt(e.signedAt)) / 1000;
-          if (timeDiff < 86400) return e;
-        });
-      }
-
       await User.findByIdAndUpdate(user._id, {
-        tokens: [...oldTokens, { token, signedAt: Date.now().toString() }],
+        token: { token, signedAt: Date.now().toString() },
       });
       //--------
       return res.send({
@@ -89,18 +80,14 @@ app.post(
   "/logout",
   isAuth,
   wrapper(async (req, res) => {
-    console.log(req.user);
+    // console.log(req.user);
     if (req.headers && req.headers.authorization) {
       const token = req.headers.authorization.split(" ")[1];
       if (!token) {
         return res.send({ message: "Failed to sign out!" });
       }
 
-      const tokens = req.user.tokens;
-      const newTokens = tokens.filter((e) => {
-        e.token !== token;
-      });
-      await User.findByIdAndUpdate(req.user._id, { tokens: newTokens });
+      await User.findByIdAndUpdate(req.user._id, { token: {} });
       return res.send({ message: "You have signed out!" });
     }
   })
@@ -110,12 +97,21 @@ app.get(
   "/protected",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    return res.send({
-      user: {
-        id: req.user._id,
-        username: req.user.username,
-      },
-    });
+    const token = req.headers.authorization.split(" ")[1];
+    if (req.user.token.token === token) {
+      return res.send({
+        message: "You are logged in",
+        info: "This is sensitive data",
+        user: {
+          id: req.user._id,
+          username: req.user.username,
+        },
+      });
+    } else {
+      return res.send({
+        message: "Your token has expired",
+      });
+    }
   }
 );
 
