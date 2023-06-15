@@ -5,11 +5,7 @@ I have implemented token based auth using passport-jwt strategy.
 ## Running the application
 
 ### Frontend setup
- 1 . Create a react app.
-
- 2 . Replace the App.js file with App.js from PassportLocal-React forder.
-
- 3 . Run the app, frontend is now live at port.3000
+ Follow JWT-frontend repo.
  
   
   ### Backend setup
