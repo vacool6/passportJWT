@@ -1,6 +1,16 @@
 
 # Passport JWT
-I have implemented token based auth using passport-jwt strategy.
+
+JWT-Based Authentication:
+
+How it works: JSON Web Tokens (JWT) are encoded tokens containing user information and digital signatures to verify their authenticity. 
+When a user logs in, the server creates a JWT and sends it to the client.
+
+Usage: The client stores the JWT (usually in local storage or a cookie) and includes it in the header of subsequent requests.
+
+Pros: Stateless (no need for server-side storage), easily scalable, supports cross-origin resource sharing (CORS), suitable for microservices architectures.
+
+Cons: Tokens cannot be invalidated before expiration without additional complexity (blacklisting, short-lived tokens), potential security risks if not implemented correctly (e.g., token leakage).
 
 ## Running the application
 
